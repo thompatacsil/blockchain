@@ -1,2 +1,2 @@
 # BLOCKCHAIN TRAINING
- - Ballot System with Metamask Connection using blockchain technology and VueJS for Frontend
+ - Ballot System with Metamask Connection and VueJS for Frontend
