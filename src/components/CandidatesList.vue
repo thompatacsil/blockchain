@@ -1,35 +1,69 @@
 <template>
-    <div>
-        <h1 class="uppercase">{{ title }}</h1>
-        <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
-        <div v-if="message.length>0">{{ message }}</div>
-        <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
-        <div class="div-account" :class="display"> Account: {{accounts[0]}}</div>
-        <div class="div-balance" :class="display">Balance: {{ balance }}</div>
-        <div class="div-btn-connect"> 
-            <button v-if="accounts.length === 0" class="btn-connect" @click="connectToMetamask">Connect to Metamask</button> 
-            <button v-else class="btn-disconnect" @click="disconnect">Disconnect</button> 
-        </div>
-        
-        <div class="container">
+    <div style="height: 100%">
+        <div id="header" class="py-2">
             <div class="row">
-                <div class="col-md-4" v-for="(candidate, index) in candidates" :key="index">
-                    <!-- <div class="div-container"> -->
-                    <div class="card div-candidate">
-                        <img 
-                            :class="card-image-top"
-                            :src="candidate.image" 
-                            alt=""
-                        >
-                        <div class="card-body">
-                            <h5 class="card-title"> Candidate # {{ index + 1 }}</h5>
-                            <p class="card-text">
-                                <span class="text-large uppercase"> {{ candidate.name }} </span> <br>
-                                <span> Vote Count: {{ candidate.voteCount }} </span> <br>
+                <div class="col-12 col-md-6 ps-5 my-2 text-start account-details">
+                    <span class="account" :class="display"> Account: {{accounts[0]}}</span> <br>
+                    <span class="balance" :class="display">Balance: {{ balance }}</span>
+                </div>
+                <div class="col-12 col-md-6 px-4 my-2 text-end">
+                    <button 
+                        v-if="accounts.length>0" class="btn-disconnect col-12 col-md-4 py-11" 
+                        @click="disconnect">Disconnect</button> 
+                    <br>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="accounts.length === 0" style="min-height: 79%">
+            <div class="container mt-4 pt-4">
+                <h1>BALLOT PROJECT</h1>
+                <p>To Start Please Connect to Metamask</p>
+                <button 
+                    v-if="accounts.length === 0" class="btn-connect px-4 py-2" 
+                    @click="connectToMetamask">Connect to Metamask</button> 
+            </div>
+        </div>
+
+        <div v-else style="min-height: 79%">
+            <div class="row mt-3">
+                <div class="col-xs-12">
+                    <h1 class="uppercase">{{ title }}</h1>
+                    <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
+                    <div v-if="message.length>0">{{ message }}</div>
+                    <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4" v-for="(candidate, index) in candidates" :key="index">
+                        <div class="card div-candidate">
+                            <img 
+                                class="card-image-top"
+                                :src="candidate.image" 
+                                alt=""
+                            >
+                            <div class="card-body">
+                                <h5 class="card-title"> Candidate # {{ index + 1 }}</h5>
+                                <p class="card-text">
+                                    <span class="text-large uppercase"> {{ candidate.name }} </span> <br>
+                                    <span> Vote Count: {{ candidate.voteCount }} </span>
+                                </p>
                                 <button v-if="votingEnabled === true" class="btn-vote" @click="addVote(index)">Vote</button>
-                            </p>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer" class="mt-4 p-3 text-uppercase">
+            <div class="row">
+                <div class="col-6 text-start">
+                    <a href="https://github.com/thompatacsil" target="new"><i class="fa-brands fa-github"></i></a>
+                </div>
+                <div class="col-6 text-end">
+                    All Rights Reserved © 2022
                 </div>
             </div>
         </div>
@@ -83,7 +117,6 @@ export default{
         
         async getVotingState(){
             this.votingEnabled = await this.contract.votingEnabled()
-            // this.votingEnabled = true
             if(this.votingEnabled === false){
                 this.message = "Voting has been disabled by the Chairperson"
             } else {
@@ -130,6 +163,34 @@ export default{
 </script>
 
 <style scoped>
+    .account-details{
+        color: white;
+        font-size: 12px;
+    }
+    #header{
+        background-color: #051821;
+    }
+    .container{
+        height: 100%!important;
+    }
+    #footer{
+        width: 100%;
+        background-color: #051821;
+        color: white;
+        font-size: 12px;
+    }
+    #footer i{
+        font-size: 18px;
+    }
+    #footer a:link, #footer a:visited{
+        color: white;
+    }
+    #footer a:hover{
+        color: #ccc;
+    }  
+    #footer a:active{
+        color: #4A5487;
+    }    
     .div-candidate{
         margin-bottom: 10px;
     }
@@ -154,59 +215,34 @@ export default{
         transform: translateY(-10px);
     }
     .btn-vote{
-        padding: 10px 10px; 
-        background-color: #0D25A8; 
+        padding: 5px 10px; 
+        background-color: #041154; 
         color: white; 
         border-radius: 5px; 
         border: none;
-        margin-top: 10px;
     }
     .btn-vote:hover{
-        background-color: #05B58B;
+        background-color: #4A5487;
     }
     .btn-vote:active{
-        background-color: #156C94;
+        background-color: #051821;
     }
     .text-large{
         font-size: 25px;
     }
-    .div-btn-connect{
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
     .btn-connect{
-        padding: 10px 10px; 
-        background-color: #156C94; 
+        background-color: #4A5487; 
         color: white; 
-        border-radius: 5px; 
+        border-radius: 25px; 
         border: none;
-        margin-bottom: 20px;
-        max-width: 250px;
-        overflow: hidden;
     }
     .btn-disconnect{
-        padding: 10px 10px; 
-        background-color: #942215; 
+        background-color: #4A5487; 
         color: white; 
-        border-radius: 5px; 
+        border-radius: 25px; 
         border: none;
-        margin-bottom: 20px;
     }
     .btn-connect-metamask:hover{
         background-color: #05B58B;
-    }
-
-    .div-account{
-        position: absolute;
-        top: 60px;
-        right: 10px;
-        font-size: 12px;
-    }
-    .div-balance{
-        position: absolute;
-        top: 80px;
-        right: 10px;
-        font-size: 12px;
     }
 </style>

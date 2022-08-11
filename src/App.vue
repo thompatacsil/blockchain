@@ -21,7 +21,7 @@ export default {
 }
 
 body, html{
-  height: 100%;
+  height: 100%!important;
 }
 
 #app {
@@ -30,7 +30,9 @@ body, html{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
+  overflow-x: hidden;
+  height: 100vh!important;
 }
 
 .div-container{
