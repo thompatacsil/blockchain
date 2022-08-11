@@ -2,20 +2,26 @@
     <div style="height: 100%">
         <div id="header" class="py-2">
             <div class="row">
-                <div class="col-12 col-md-6 ps-5 my-2 text-start account-details">
+                <div class="col-6 col-md-6 ps-5 my-2 text-start account-details text-truncate">
                     <span class="account" :class="display"> Account: {{accounts[0]}}</span> <br>
                     <span class="balance" :class="display">Balance: {{ balance }}</span>
                 </div>
-                <div class="col-12 col-md-6 px-4 my-2 text-end">
-                    <button 
-                        v-if="accounts.length>0" class="btn-disconnect col-12 col-md-4 py-11" 
-                        @click="disconnect">Disconnect</button> 
-                    <br>
+                <div class="col-6 col-md-6 px-4 my-2 pt-2 text-end">
+                    <!-- <button 
+                        v-if="accounts.length>0" class="btn-disconnect col-12 col-md-4 py-1" 
+                        @click="disconnect">Disconnect</button>  -->
+                    <a href="#" 
+                        v-if="accounts.length>0" 
+                        @click="disconnect" 
+                        class="me-4"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Disconnect">
+                        <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 18px;"></i>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div v-if="accounts.length === 0" style="min-height: 79%">
+        <div v-if="accounts.length === 0" style="min-height: 80vh">
             <div class="container mt-4 pt-4">
                 <h1>BALLOT PROJECT</h1>
                 <p>To Start Please Connect to Metamask</p>
@@ -182,13 +188,16 @@ export default{
     #footer i{
         font-size: 18px;
     }
-    #footer a:link, #footer a:visited{
+    #footer a:link, #footer a:visited, 
+    #header a:link, #header a:visited{
         color: white;
     }
-    #footer a:hover{
+    #footer a:hover,
+    #header a:hover{
         color: #ccc;
     }  
-    #footer a:active{
+    #footer a:active,
+    #header a:active{
         color: #4A5487;
     }    
     .div-candidate{
