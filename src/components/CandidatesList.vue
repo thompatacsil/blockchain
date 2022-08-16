@@ -36,7 +36,7 @@
                 <div class="col-xs-12">
                     <h1 class="uppercase">{{ title }}</h1>
                     <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
-                    <div v-if="message.length>0">{{ message }}</div>
+                    <div v-if="message.length>0" class="text-danger">{{ message }}</div>
                     <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ export default{
             candidates: [],
             display: "display-none",
             votingEnabled: true,
-            contractAddress: "0x14615F912841F65b21a7Ac985232042eb1480F2f",
+            contractAddress: "0x5431a6b5582bc8bD497732638E502589d6D648BD",
         }
     },
     methods: {
