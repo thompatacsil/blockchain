@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%">
+    <div style="height: 100vh">
         <div id="header" class="py-2">
             <div class="row">
                 <div class="col-6 col-md-6 ps-5 my-2 text-start account-details text-truncate">
@@ -10,18 +10,31 @@
                     <!-- <button 
                         v-if="accounts.length>0" class="btn-disconnect col-12 col-md-4 py-1" 
                         @click="disconnect">Disconnect</button>  -->
-                    <a href="#" 
-                        v-if="accounts.length>0" 
-                        @click="disconnect" 
-                        class="me-4"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Disconnect">
-                        <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 18px;"></i>
-                    </a>
+                    <div class="row">
+                        <div class="col-11">
+                            <div class="form-check form-switch" style="margin-left: 96%">
+                                <!-- <label class="form-check-label" for="flexSwitchCheckDefault">Enable Voting</label> -->
+                                <input 
+                                v-if="isChairperson"
+                                class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" 
+                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Enable Voting State">
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <a href="#" 
+                                v-if="accounts.length>0" 
+                                @click="disconnect" 
+                                class="me-4"
+                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Disconnect">
+                                <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 18px;"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="accounts.length === 0" style="min-height: 80vh">
+        <div class="content" v-if="accounts.length === 0">
             <div class="container mt-4 pt-4">
                 <h1>BALLOT PROJECT</h1>
                 <p>To Start Please Connect to Metamask</p>
@@ -31,13 +44,14 @@
             </div>
         </div>
 
-        <div v-else style="min-height: 79%">
-            <div class="row mt-3">
+        <div class="content" v-else>
+            <div class="row mt-4 pt-4">
                 <div class="col-xs-12">
                     <h1 class="uppercase">{{ title }}</h1>
                     <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
                     <div v-if="message.length>0" class="text-danger">{{ message }}</div>
                     <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
+                    {{ chairperson }}
                 </div>
             </div>
             <div class="container">
@@ -91,9 +105,13 @@ export default{
             contract: null,
             candidatesLength: 0,
             candidates: [],
+            winner: "",
             display: "display-none",
             votingEnabled: true,
             contractAddress: "0x5431a6b5582bc8bD497732638E502589d6D648BD",
+            chairperson: "",
+            isChairperson: false,
+            contractAddress: "0xd21a001ec48C9D44CB70cc6129420dB107e50176",
         }
     },
     methods: {
@@ -106,6 +124,22 @@ export default{
             this.candidates = []
             this.display = "display-none"
             this.errorMessage = ""
+            this.winner = ""
+        },
+        async getChairperson(){
+            this.chairperson = "";
+            this.chairperson = await this.contract.chairperson()
+
+            if(this.chairperson == this.accounts[0]){
+                this.isChairperson = true;
+            }
+            console.log(this.chairperson)
+            console.log(this.accounts[0])
+            console.log(this.isChairperson)
+        },
+        async getWinner(){
+            this.winner = ""
+            this.winner = await this.contract.getWinner()
         },
         async getCandidates(){
             this.candidatesLength = await this.contract.getCandidatesLength()
@@ -120,7 +154,21 @@ export default{
                 this.candidates.push(_candidate)
             }
         },
-        
+        async setVotingState(votingState){
+            var signer = this.provider.getSigner()
+            var contractWithSigner = this.contract.connect(signer)
+            try{
+                var transaction = await contractWithSigner.setVotingState(votingState)
+                await transaction.wait()
+                this.errorMessage = ""
+                this.getCandidates()
+            }catch(error){
+                this.errorMessage = error.data.message
+
+                var message = this.errorMessage.split("revert")
+                this.errorMessage = message[1]
+            }
+        },
         async getVotingState(){
             this.votingEnabled = await this.contract.votingEnabled()
             if(this.votingEnabled === false){
@@ -133,6 +181,7 @@ export default{
             this.contract = new ethers.Contract(this.contractAddress, ballotAbi)
             this.contract = this.contract.connect(this.provider)
             
+            this.getChairperson()
             this.getVotingState()
             this.getCandidates()
         },
@@ -169,17 +218,23 @@ export default{
 </script>
 
 <style scoped>
+    .content{
+        /* height: 82%; */
+        min-height: 83%;
+    }
     .account-details{
         color: white;
         font-size: 12px;
     }
     #header{
         background-color: #051821;
+        /* height: 7%; */
     }
     .container{
         height: 100%!important;
     }
     #footer{
+        /* height: 5%; */
         width: 100%;
         background-color: #051821;
         color: white;
