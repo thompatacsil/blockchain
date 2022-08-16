@@ -4,7 +4,7 @@
 # How to setup
  - Import the workspace to remix
  - Compile and Deploy the contract
- - Copy the contact address and paste it on the src/components/CandidatesList.vue -> contractAddress variable
+ - Copy the contact address and paste it on the ```src/components/CandidatesList.vue -> contractAddress``` variable
  - Save and Enjoy
  
  
