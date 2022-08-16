@@ -51,7 +51,8 @@
                     <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
                     <div v-if="message.length>0" class="text-danger">{{ message }}</div>
                     <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
-                    {{ chairperson }}
+                    {{ isChairperson }} <br>
+                    {{ winner }}
                 </div>
             </div>
             <div class="container">
@@ -108,10 +109,9 @@ export default{
             winner: "",
             display: "display-none",
             votingEnabled: true,
-            contractAddress: "0x5431a6b5582bc8bD497732638E502589d6D648BD",
             chairperson: "",
             isChairperson: false,
-            contractAddress: "0xd21a001ec48C9D44CB70cc6129420dB107e50176",
+            contractAddress: "0x2aEEf1ad0eE8F61ec42d6115e38f3a6FD580e7C5",
         }
     },
     methods: {
@@ -126,16 +126,10 @@ export default{
             this.errorMessage = ""
             this.winner = ""
         },
-        async getChairperson(){
-            this.chairperson = "";
-            this.chairperson = await this.contract.chairperson()
-
-            if(this.chairperson == this.accounts[0]){
-                this.isChairperson = true;
-            }
-            console.log(this.chairperson)
-            console.log(this.accounts[0])
-            console.log(this.isChairperson)
+        async getIsChairperson(){
+            this.isChairperson = false;
+            this.isChairperson = await this.contract.isChairperson()
+            
         },
         async getWinner(){
             this.winner = ""
@@ -153,6 +147,8 @@ export default{
                 }
                 this.candidates.push(_candidate)
             }
+            
+            this.getWinner()
         },
         async setVotingState(votingState){
             var signer = this.provider.getSigner()
@@ -181,7 +177,7 @@ export default{
             this.contract = new ethers.Contract(this.contractAddress, ballotAbi)
             this.contract = this.contract.connect(this.provider)
             
-            this.getChairperson()
+            this.getIsChairperson()
             this.getVotingState()
             this.getCandidates()
         },
