@@ -7,15 +7,20 @@
 
 <script>
 // import MintPage from './components/MintPage.vue'
+import Vue from 'vue';
 import CandidatesList from './components/CandidatesList.vue';
+import VueSweetAlert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 export default {
   name: 'App',
   components: {
     // MintPage,
     CandidatesList
+  }
 }
-}
+
+Vue.use(VueSweetAlert2);
 </script>
 
 <style>

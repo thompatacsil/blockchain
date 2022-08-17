@@ -50,15 +50,17 @@
                     <h1 class="uppercase">{{ title }}</h1>
                     <div class="div-number-candidates">Number of Candidates: {{ candidatesLength }}</div>
                     <div v-if="message.length>0" class="text-danger">{{ message }}</div>
-                    <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div>
-                    {{ isChairperson }} <br>
-                    {{ winner }}
+                    <!-- <div v-if="errorMessage.length>0" class="div-error">Error: {{ errorMessage }}</div> -->
+                    
                 </div>
             </div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-4" v-for="(candidate, index) in candidates" :key="index">
                         <div class="card div-candidate">
+                            <div 
+                                v-if="winner == candidate.name"
+                                class="div-winner"> <i class="fa-solid fa-crown"></i> </div>
                             <img 
                                 class="card-image-top"
                                 :src="candidate.image" 
@@ -200,20 +202,42 @@ export default{
             try{
                 var transaction = await contractWithSigner.vote(candidateIndex)
                 await transaction.wait()
+
                 this.errorMessage = ""
                 this.getCandidates()
+
+                this.$swal({
+                    title: "Successful",
+                    text: "Vote has been cast",
+                    icon: "success"
+                })
             }catch(error){
                 this.errorMessage = error.data.message
 
                 var message = this.errorMessage.split("revert")
                 this.errorMessage = message[1]
-            }
+
+                this.$swal({
+                    title: "Something went Wrong",
+                    text: this.errorMessage,
+                    icon: "error"
+                })
+            }            
         }
     }
 }
 </script>
 
 <style scoped>
+    .div-winner{
+        position: absolute;
+        right: 10px;
+        top: 5px;
+    }
+    .div-winner i{
+        font-size: 25px;
+        color: #6E3C00;
+    }
     .content{
         /* height: 82%; */
         min-height: 83%;
